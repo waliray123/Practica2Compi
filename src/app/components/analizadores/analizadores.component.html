@@ -1,15 +1,12 @@
-<div class="py-5 container">   
-    <form>
+ 
+    <form action="" (ngSubmit)="onSubmit()" class="container">
         <div class="mb-4">
-            <label for="entradaWison" class="form-label">Entrada</label>
-            <textarea class="form-control" id="entradaWison" rows="20"></textarea>
+            <label for="entradaWison" class="form-label" >Entrada</label>
+            <textarea class="form-control" id="" name="entrada" [(ngModel)]="entrada" rows="20"></textarea>
         </div> 
-        <select class="form-select" aria-label="Default select example">
-            <option selected>Open this select menu</option>
-            <option value="1">One</option>
-            <option value="2">Two</option>
-            <option value="3">Three</option>
+        <select class="form-select" aria-label="Default select example" name="nombreAnalizador" [(ngModel)] = "nombreAnalizador">            
+            <option [value]="item" *ngFor="let item of nombreAnalizadores">{{item}}</option>
         </select>
         <button type="submit" class="btn btn-primary float-right">Compilar</button>       
     </form>
-</div>
+

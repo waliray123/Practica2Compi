@@ -1,27 +1,29 @@
-class NoTerminal{
+import { Produccion } from "./Produccion";
+
+export class NoTerminal{
     
     nombre: string;
-    nombreProducciones:  Array<string>;
+    producciones:  Produccion[];
 
     constructor(){
         this.nombre = '';        
-        this.nombreProducciones = [];
+        this.producciones = [];
     }
 
     setNombre(nomb: string){
         this.nombre = nomb;
     }
 
-    addNuevoLexema(nombProd: string){
-        this.nombreProducciones.push(nombProd);
+    addNuevaProduccion(produccion: Produccion){
+        this.producciones.push(produccion);
     }
 
     getNombre(){
-        return this.nombre;        
+        return this.nombre;  
     }
 
-    getLexemas(){
-        return this.nombreProducciones;
+    getProducciones(){
+        return this.producciones;
     }
 
 }

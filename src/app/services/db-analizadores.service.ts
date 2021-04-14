@@ -34,4 +34,8 @@ export class DbAnalizadoresService {
   setPrueba(nom:string){
     this.prueba = nom;
   }
+
+  getCantidadAnalizadores(){
+    return this.analizadores.length;
+  }
 }

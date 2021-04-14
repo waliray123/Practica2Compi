@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ErrorCom } from '../../models/ErrorCom';
+import {DbAnalizadoresService} from 'src/app/services/db-analizadores.service';
 
 @Component({
   selector: 'app-reporte-errores',
@@ -10,25 +11,10 @@ export class ReporteErroresComponent implements OnInit {
 
   errores: ErrorCom[] = [];
 
-  constructor() { }
+  constructor(private dbAnServ:DbAnalizadoresService) { }
 
   ngOnInit(): void {
-    this.errores = [
-      {
-        tipo: 'Lexico',
-        desc: 'Simbolo no existe',
-        lin: 1,
-        col: 1,
-        lexema: '%'
-      },
-      {
-        tipo: 'Sintactico',
-        desc: 'No se esperaba componente',
-        lin: 8,
-        col: 4,
-        lexema: 'AAA'
-      }
-    ];
+    this.errores = this.dbAnServ.getErrores();
   }
 
 }

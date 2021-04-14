@@ -1,6 +1,8 @@
-class Terminal{
+import { Lexema } from "./Lexema";
+
+export class Terminal{
     nombre: string;
-    lexemas:  Array<string>;
+    lexemas:  Lexema[];
 
     constructor(){
         this.nombre = '';        
@@ -11,7 +13,7 @@ class Terminal{
         this.nombre = nomb;
     }
 
-    addNuevoLexema(lex: string){
+    addNuevoLexema(lex: Lexema){
         this.lexemas.push(lex);
     }
 
@@ -22,4 +24,5 @@ class Terminal{
     getLexemas(){
         return this.lexemas;
     }
+    
 }
