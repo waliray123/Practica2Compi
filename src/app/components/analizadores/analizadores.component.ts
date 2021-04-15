@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AnalizadorLexico } from 'src/app/controlers/AnalizadorLexico';
+import { AnalizadorSintactico } from 'src/app/controlers/AnalizadorSintactico';
 import { Analizador } from 'src/app/models/Analizador';
 import {DbAnalizadoresService} from 'src/app/services/db-analizadores.service';
 
@@ -34,6 +35,10 @@ export class AnalizadoresComponent implements OnInit {
       var analizadorLex = new AnalizadorLexico(this.entrada,analizador);
       var tokens = analizadorLex.getTokens();
       var errores = analizadorLex.getErrores();
+      if(errores.length == 0){
+        var analizadorSintactico = new AnalizadorSintactico(analizador,tokens);
+        
+      }
       console.log(tokens);
       console.log(errores);
     }
