@@ -3,6 +3,7 @@ import { AnalizadorLexico } from 'src/app/controlers/AnalizadorLexico';
 import { AnalizadorSintactico } from 'src/app/controlers/AnalizadorSintactico';
 import { Analizador } from 'src/app/models/Analizador';
 import {DbAnalizadoresService} from 'src/app/services/db-analizadores.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-analizadores',
@@ -16,7 +17,7 @@ export class AnalizadoresComponent implements OnInit {
   nombreAnalizadores : string[] = [];
   nombreAnalizador : string = '';
 
-  constructor(private dbAnServ:DbAnalizadoresService) { }
+  constructor(private dbAnServ:DbAnalizadoresService,private router:Router) { }
 
   ngOnInit(): void {  
     this.analizadores = this.dbAnServ.getAnalizadores();
@@ -36,11 +37,13 @@ export class AnalizadoresComponent implements OnInit {
       var tokens = analizadorLex.getTokens();
       var errores = analizadorLex.getErrores();
       if(errores.length == 0){
-        var analizadorSintactico = new AnalizadorSintactico(analizador,tokens);
-        
+        var analizadorSintactico = new AnalizadorSintactico(analizador,tokens);        
+      }else{
+        this.dbAnServ.setErrores(errores);
+        this.router.navigate(["/reporteErrores"]);
       }
-      console.log(tokens);
-      console.log(errores);
+      //console.log(tokens);
+      //console.log(errores);
     }
   }
 

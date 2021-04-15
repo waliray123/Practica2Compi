@@ -23,6 +23,7 @@ export class AnlizadorWisonComponent implements OnInit {
   entrada:string = '';
   gramatica = require("../../gramaticas/gramatica.js");
   erroresLexSint : ErrorCom[] = [];
+  mensaje : string = '';
   
   
 
@@ -96,6 +97,7 @@ export class AnlizadorWisonComponent implements OnInit {
       this.router.navigate(["/reporteErrores"]);
     }else{
       this.dbAnServ.addAnalizador(analizadorIns);
+      this.mensaje = "El analizador guardado como: "+ analizadorIns.getNombre();;
     }
     
     console.log(analizadorIns);    
