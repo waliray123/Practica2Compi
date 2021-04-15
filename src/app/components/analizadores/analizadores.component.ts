@@ -16,6 +16,7 @@ export class AnalizadoresComponent implements OnInit {
   entrada:string = '';
   nombreAnalizadores : string[] = [];
   nombreAnalizador : string = '';
+  mensaje :  string = '';
 
   constructor(private dbAnServ:DbAnalizadoresService,private router:Router) { }
 
@@ -37,7 +38,13 @@ export class AnalizadoresComponent implements OnInit {
       var tokens = analizadorLex.getTokens();
       var errores = analizadorLex.getErrores();
       if(errores.length == 0){
-        var analizadorSintactico = new AnalizadorSintactico(analizador,tokens);        
+        var analizadorSintactico = new AnalizadorSintactico(analizador,tokens); 
+        var esAmbigua = analizadorSintactico.getEsAmbigua();
+        if(esAmbigua == true){
+          this.mensaje = "La gramatica es ambigua";
+        }else{
+          this.mensaje = "La entrada analizada";
+        }
       }else{
         this.dbAnServ.setErrores(errores);
         this.router.navigate(["/reporteErrores"]);

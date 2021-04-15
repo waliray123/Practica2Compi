@@ -34,17 +34,21 @@ export class AnalizadorSintactico{
         let noTerminalInicial = this.getNoTerminalPorNombre(initialSim); 
         let produccionesIniciales = noTerminalInicial.getProducciones();               
         const tokenInicial = this.tokens[0];
-        var numsProduccionesEntra = this.getProduccionesTokenEntra(tokenInicial, noTerminalInicial, "",0);        
-        for(let prodEntra of numsProduccionesEntra){
-            let produccion = produccionesIniciales[prodEntra];
-            var arbol = new Arbol();            
-            var nodoA = new NodoArbol();
-            nodoA.insertarValor(noTerminalInicial.getNombre());
-            arbol.insertarRaiz(nodoA);
-            this.arboles.push(arbol);
-            this.genArbol(produccion,0,arbol);
-        } 
-        console.log(this.arboles);       
+        var numsProduccionesEntra = this.getProduccionesTokenEntra(tokenInicial, noTerminalInicial, "",0);      
+        try {
+            for(let prodEntra of numsProduccionesEntra){
+                let produccion = produccionesIniciales[prodEntra];
+                var arbol = new Arbol();            
+                var nodoA = new NodoArbol();
+                nodoA.insertarValor(noTerminalInicial.getNombre());
+                arbol.insertarRaiz(nodoA);
+                this.arboles.push(arbol);
+                this.genArbol(produccion,0,arbol);
+            }
+            console.log(this.arboles); 
+        } catch (errorE ) {
+            console.error(errorE);
+        }              
         //console.log("Num Prodrucciones Entra");
         //console.log(numProduccionesEntra);
     }
@@ -148,5 +152,9 @@ export class AnalizadorSintactico{
             return "terminal";
         }
         return tipo;
+    }
+
+    getEsAmbigua(){
+        return this.esAmbigua;
     }
 }
