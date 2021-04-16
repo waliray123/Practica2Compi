@@ -57,6 +57,16 @@ export class AnalizadoresComponent implements OnInit {
 //        }
         var analizadorS = new AnalizadorSint(analizador,tokens);
         var arboles = analizadorS.getArboles();
+        var esAmbigua = analizadorS.getEsAmbigua();
+        if(esAmbigua == true){
+          this.mensaje = "La gramatica es ambigua";
+        }else{          
+          if(arboles.length > 1){
+            this.mensaje = "La gramarica es ambigua";
+          }else{
+            this.mensaje = "Entrada correctamente analizada, no es ambigua";
+          }          
+        }
         var erroresSint = analizadorS.getErrores();
         if(erroresSint.length > 0){
           this.dbAnServ.setErrores(erroresSint);

@@ -17,6 +17,7 @@ export class AnalizadorSint{
     arbolUsado : Arbol;
     numTokenEv : number;
     numTokenEv2 : number;
+    cantidadTokens : number;
 
 
     constructor(analizador:Analizador, tokens : Token[]){
@@ -29,6 +30,7 @@ export class AnalizadorSint{
         this.arboles = [];
         this.numTokenEv = 0;
         this.numTokenEv2 = 0;
+        this.cantidadTokens = tokens.length-1;
         this.analizar();
     }
 
@@ -47,7 +49,7 @@ export class AnalizadorSint{
             this.arboles.push(this.arbolUsado);         
             var esEliminado = this.reducirAUnpaProduccion(numProducciones, this.arbolUsado, noTerminalInicial,this.numTokenEv);
             if(esEliminado == true){
-
+                //Ya no lo termine asi que se vaya
             }
         }else if(numProducciones.length == 0){
             //InsertarError -> No hay producciones que utilicen el token 
@@ -58,8 +60,20 @@ export class AnalizadorSint{
             this.arbolUsado.insertarRaiz(nodoRaiz);
             let produccion = produccionesIniciales[numProducciones[0]];   
             this.arboles.push(this.arbolUsado);         
-            this.seguirEvaluando(produccion, nodoRaiz);            
+            this.seguirEvaluando(produccion, nodoRaiz);    
+            if(this.numTokenEv == this.cantidadTokens){
+                //No hay error
+            }else{
+                if(this.numTokenEv2 == this.cantidadTokens){
+                    //No hay error
+                }else{
+                    for(var i = this.numTokenEv; i <= this.cantidadTokens; i++ ){
+                        this.insertarError("Sintactico","Lexema extra",this.tokens[i].getValor(),this.tokens[i].getLin(),this.tokens[i].getCol());
+                    }
+                }
+            }
         }
+
     }    
 
     seguirEvaluando(produccion: Produccion, nodoIns : NodoArbol){
@@ -67,6 +81,12 @@ export class AnalizadorSint{
         for(let ord of ordenProducciones){
             const tipo = this.getTipoProduccion(ord);
             if(tipo == "terminal"){
+                
+                if(this.cantidadTokens < this.numTokenEv){
+                    this.insertarError("Sintactico","Cadena no terminada, Se esperaba : "+ ord,ord
+                        ,0,0);
+                        return;
+                }
                 if(ord == this.tokens[this.numTokenEv].getTerminalUsado()){                    
                     var nodoIns2 = new NodoArbol();
                     nodoIns2.insertarPadre(nodoIns);
@@ -114,6 +134,7 @@ export class AnalizadorSint{
         for(let numProd of numProducciones){
             let produccion = produccionesNoT[numProd];            
             var arbolNuevo = Object.assign(arbolPadre);
+            //var arbolNuevo = arbolPadre;
             var nodoIns = arbolNuevo.getNodoAct();
             var esCorrecto = this.seguirEvaluando2(produccion,nodoIns,arbolNuevo,numTok1);
             if(esCorrecto == true){                
@@ -140,17 +161,22 @@ export class AnalizadorSint{
     }
 
     seguirEvaluando2(produccion: Produccion, nodoIns : NodoArbol, arbolIns: Arbol, numTok : number): boolean{
-        let numTok1 = numTok;
+        this.numTokenEv2 = numTok;
         const ordenProducciones = produccion.getOrdenProducciones();        
         for(let ord of ordenProducciones){
             const tipo = this.getTipoProduccion(ord);
             if(tipo == "terminal"){
-                if(ord == this.tokens[numTok1].getTerminalUsado()){                    
+                if(this.cantidadTokens < this.numTokenEv2){
+                    this.insertarError("Sintactico","Cadena no terminada, Se esperaba : "+ ord,ord
+                        ,0,0);
+                        return false;
+                }
+                if(ord == this.tokens[this.numTokenEv2].getTerminalUsado()){                    
                     var nodoIns2 = new NodoArbol();
                     nodoIns2.insertarPadre(nodoIns);
-                    nodoIns2.insertarValor(this.tokens[numTok1].getValor());
+                    nodoIns2.insertarValor(this.tokens[this.numTokenEv2].getValor());
                     nodoIns.insertarNodoHijo(nodoIns2);
-                    numTok1++;
+                    this.numTokenEv2++;
                 }else{
                     return false;
                     //Error sintactico -> Token no insertado 
@@ -165,10 +191,14 @@ export class AnalizadorSint{
                 arbolIns.insertarNodoAct(nodoIns2);
                 var noTerminal =  this.getNoTerminalPorNombre(ord);
                 var produccionesNoT = noTerminal.getProducciones();
-                var numProducciones = this.getProduccionesTokenEntra2(this.tokens[numTok1], noTerminal, noTerminal.getNombre(),0);
+                if(this.cantidadTokens < this.numTokenEv2){
+                    //this.insertarError("Sintactico","Cadena no terminada, Se esperaba : "+ ord,ord,0,0);
+                        return false;
+                }
+                var numProducciones = this.getProduccionesTokenEntra2(this.tokens[this.numTokenEv2], noTerminal, noTerminal.getNombre(),0);
                 if(numProducciones.length > 1){
                     //reducir a una produccion
-                    var esEliminado = this.reducirAUnpaProduccion(numProducciones, arbolIns, noTerminal,numTok1);
+                    var esEliminado = this.reducirAUnpaProduccion(numProducciones, arbolIns, noTerminal,this.numTokenEv2);
                     if(esEliminado == true){
                         return false;
                     }
@@ -179,7 +209,7 @@ export class AnalizadorSint{
 
                 }else{
                     let produccion = produccionesNoT[numProducciones[0]];            
-                    this.seguirEvaluando(produccion,nodoIns2);
+                    this.seguirEvaluando2(produccion,nodoIns2,arbolIns,this.numTokenEv2);
                 }
             }
         }   
@@ -286,5 +316,9 @@ export class AnalizadorSint{
 
     getArboles(){
         return this.arboles;
+    }
+
+    getEsAmbigua(){
+        return this.esAmbigua;
     }
 }
