@@ -27,7 +27,7 @@ export class AnalizadorSintactico{
         this.cantidadTokens = tokens.length;
         this.noTerminales = this.analizador.getNoTerminales();
         this.evaluarEntrada();
-    }
+    }    
 
     evaluarEntrada(){
         var initialSim = this.analizador.getInitialSim();
@@ -53,6 +53,10 @@ export class AnalizadorSintactico{
         //console.log(numProduccionesEntra);
     }
 
+    generarArbol(){
+
+    }
+
     genArbol(produccion : Produccion, numTokenEv: number, arbol : Arbol):string{
         let tokenEv = this.tokens[arbol.getNumTokenEv()];
         let ordensProd = produccion.getOrdenProducciones();        
@@ -65,8 +69,9 @@ export class AnalizadorSintactico{
                 arbol.insertarNodoAct(nodoNT);
                 let noTerminal = this.getNoTerminalPorNombre(ordenProd);
                 let produccionesNoTerminal = noTerminal.getProducciones();
-                //var numsProduccionesEntra = this.getProduccionesTokenEntra(tokenEv, noTerminal, ordenProd,0);                        
-                for(let prod of produccionesNoTerminal){        
+                var numsProduccionesEntra = this.getProduccionesTokenEntra(tokenEv, noTerminal, ordenProd,0);                        
+                for(let numProd of numsProduccionesEntra){    
+                    const prod = produccionesNoTerminal[numProd];
                     let arbolAux = arbol;            
                     var arbol2 = arbolAux;
                     this.arboles.push(arbol2);
@@ -77,16 +82,6 @@ export class AnalizadorSintactico{
                         arbol2.insertarNodoAct(nodoC[0]);
                         numTokenEv++;
                         arbol2.setNumTokenEv(numTokenEv);
-                    }                    
-                }
-                for(let prod of produccionesNoTerminal){                            
-                    var retorno = this.genArbol(prod,arbol.getNumTokenEv(),arbol);                                        
-                    if(retorno == "insertado"){
-                        var nodoA = arbol.getNodoAct();
-                        var nodoC = nodoA.getNodoPadre();
-                        arbol.insertarNodoAct(nodoC[0]);
-                        numTokenEv++;
-                        arbol.setNumTokenEv(numTokenEv);
                     }                    
                 }
             }else if(tipoProduccion == "terminal"){
@@ -102,6 +97,8 @@ export class AnalizadorSintactico{
         }
         return "";
     }
+
+
 
 
     getProduccionesTokenEntra(tokenEv: Token, noTerminalEv: NoTerminal, nombreNoTermAnt: string, numOrdProd : number):number[]{
@@ -153,6 +150,8 @@ export class AnalizadorSintactico{
         }
         return tipo;
     }
+
+
 
     getEsAmbigua(){
         return this.esAmbigua;

@@ -4,6 +4,7 @@ import { AnalizadorSintactico } from 'src/app/controlers/AnalizadorSintactico';
 import { Analizador } from 'src/app/models/Analizador';
 import {DbAnalizadoresService} from 'src/app/services/db-analizadores.service';
 import { Router } from '@angular/router';
+import { AnalizadorSint } from 'src/app/controlers/AnalizadorSint';
 
 @Component({
   selector: 'app-analizadores',
@@ -17,6 +18,11 @@ export class AnalizadoresComponent implements OnInit {
   nombreAnalizadores : string[] = [];
   nombreAnalizador : string = '';
   mensaje :  string = '';
+  pathArchivo : any;
+  archivoSubido :string =  '';
+  fs = require('fs');
+  util = require('util');
+  //graphviz = require('graphviz');
 
   constructor(private dbAnServ:DbAnalizadoresService,private router:Router) { }
 
@@ -26,6 +32,10 @@ export class AnalizadoresComponent implements OnInit {
       this.nombreAnalizadores.push(analizador.getNombre());      
     }
     //console.log(this.analizadores);
+  }
+
+  subirArchivo(){
+    //this.fs.readFile(this.pathArchivo,'utf-8');
   }
 
   onSubmit(){
@@ -38,13 +48,22 @@ export class AnalizadoresComponent implements OnInit {
       var tokens = analizadorLex.getTokens();
       var errores = analizadorLex.getErrores();
       if(errores.length == 0){
-        var analizadorSintactico = new AnalizadorSintactico(analizador,tokens); 
-        var esAmbigua = analizadorSintactico.getEsAmbigua();
-        if(esAmbigua == true){
-          this.mensaje = "La gramatica es ambigua";
-        }else{
-          this.mensaje = "La entrada analizada";
+//        var analizadorSintactico = new AnalizadorSintactico(analizador,tokens); 
+//        var esAmbigua = analizadorSintactico.getEsAmbigua();
+//        if(esAmbigua == true){
+//          this.mensaje = "La gramatica es ambigua";
+//        }else{
+//          this.mensaje = "La entrada analizada";
+//        }
+        var analizadorS = new AnalizadorSint(analizador,tokens);
+        var arboles = analizadorS.getArboles();
+        var erroresSint = analizadorS.getErrores();
+        if(erroresSint.length > 0){
+          this.dbAnServ.setErrores(erroresSint);
+          this.router.navigate(["/reporteErrores"]);
         }
+        console.log(arboles);
+        console.log(erroresSint);
       }else{
         this.dbAnServ.setErrores(errores);
         this.router.navigate(["/reporteErrores"]);

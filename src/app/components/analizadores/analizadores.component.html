@@ -1,8 +1,9 @@
- 
+
+
     <form action="" (ngSubmit)="onSubmit()" class="container">
         <div class="mb-4">
             <label for="entradaWison" class="form-label" >Entrada</label>
-            <textarea class="form-control" id="" name="entrada" [(ngModel)]="entrada" rows="20"></textarea>
+            <textarea class="form-control" id="" name="entrada" [(ngModel)]="entrada" rows="20">{{archivoSubido}}</textarea>
         </div> 
         <select class="form-select" aria-label="Default select example" name="nombreAnalizador" [(ngModel)] = "nombreAnalizador">            
             <option [value]="item" *ngFor="let item of nombreAnalizadores">{{item}}</option>
@@ -10,4 +11,11 @@
         <label for="mensaje" class="form-label">{{mensaje}}</label>
         <button type="submit" class="btn btn-primary float-right">Compilar</button>       
     </form>
-
+    <!--
+    <form action=""  (ngSubmit)="subirArchivo()" class="container">
+        <div class="mb-4">              
+        <button type="submit" class="btn btn-primary float-right">Subir Archivo</button> 
+        <input type="file" class="btn btn-secondary float-right" value="pathArchivo" [(ngModel)] = "pathArchivo" [ngModelOptions]="{standalone: true}">
+        </div>  
+    </form>
+    {{pathArchivo}} -->
